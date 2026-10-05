@@ -1,2 +1,5 @@
 #Environment variables for the project
 *.env
+
+#the dataset csv files
+*.csv
