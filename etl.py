@@ -30,5 +30,24 @@ def run_etl():
         lambda x: x.sample(frac=SAMPLE_FRACTION, random_state=42)
      )
     
+    #Transformation phase2: # TRANSFORM Phase 2: Clean column names for SQL standards
+    print("Transforming data: Renaming columns to snake_case...")
+    sampled_df = sampled_df.rename(columns={
+        'oldbalanceOrg': 'old_balance_org',
+        'newbalanceOrg': 'new_balance_org',
+        'oldbalanceDest': 'old_balance_dest',
+        'newbalanceDest': 'new_balance_dest',
+        'isFraud': 'is_fraud',
+        'isFlaggedFraud': 'is_flagged_fraud'
+    })
     
+    # LOAD
+    # We still use chunksize to send data over the internet so Neon doesn't time out the connection
+    print(f"Loading data: Pushing {len(sampled_df):,} rows to Neon database in chunks...")
+    sampled_df.to_sql(TABLE_NAME, con=engine, if_exists='replace', index=False, chunksize=10_000)
+    
+    print("ETL pipeline completed successfully! Data is live in the cloud.")
+
+if __name__ == "__main__":
+    run_etl()
     
