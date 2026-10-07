@@ -3,5 +3,6 @@
 
 #the dataset csv files
 *.csv
+paysim dataset.csv
 
 myenv
